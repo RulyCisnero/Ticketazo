@@ -1,6 +1,4 @@
 export class RegisterForm {
-
-
     constructor() {
         this.nombre = () => cy.get('[data-cy="input-nombres"]');
         this.apellido = () => cy.get('[data-cy="input-apellido"]');
@@ -32,6 +30,10 @@ export class RegisterForm {
     fillApellido(apellido) {
         this.apellido().clear().type(apellido);
     }
+    
+    fillTelefono(telefono){
+        this.telefono().type(telefono);
+    }
 
     fillDni(dni) {
         this.dni().clear().type(dni);
@@ -46,8 +48,8 @@ export class RegisterForm {
     fillLocalidad(nombre) {
         this.localidad().click().type(nombre)
         cy.get('[data-cy^="option-localidad-"] span[data-label="true"]')
-         .contains(nombre)
-         .click({ force: true });
+            .contains(nombre)
+            .click({ force: true });
     }
 
     fillFecha(day, month, year) {
@@ -81,98 +83,108 @@ export class RegisterForm {
         this.ButtonRegister().click();
     }
 
-    //seleccionar provincia hardcodeada
-    selectProvincia() {
-        this.provincia().click();
-        cy.get('[data-cy^="option-provincia-"] span[data-label="true"]')
-            .contains('Buenos Aires')
-            .click({ force: true });
+    /*  //seleccionar provincia hardcodeada
+     selectProvincia() {
+         this.provincia().click();
+         cy.get('[data-cy^="option-provincia-"] span[data-label="true"]')
+             .contains('Buenos Aires')
+             .click({ force: true });
+     }
+ 
+     selectlocalidad() {
+         this.localidad().click();
+         cy.get('[data-cy^="option-localidad-"] span[data-label="true"]')
+             .contains('Coronel Dorrego')
+             .click({ force: true });
+     }
+ 
+ 
+     //funcion para traerme todos los nombres de las provincias
+     //(^= significa "que empiece con")va a agarrar todos los elementos cuyo atributo data-cy arranca con option-provincia-
+     logProvincias() {
+         this.provincia().click()
+         cy.get('[data-cy^="option-provincia-"]')
+             .each(($el, index) => {
+                 const nombre = $el.text().trim();
+                 cy.log(`Provincia ${index + 1}: ${nombre}`);
+                 console.log(`Provincia ${index + 1}: ${nombre}`);
+             });
+     }
+ 
+     logLocalidades() {
+         this.localidad().click()
+         cy.get('[data-cy^="option-localidad-"]').scrollTo('bottom')
+             .each(($el, index) => {
+                 const nombre = $el.text().trim();
+                 cy.log(`localidades ${index + 1}: ${nombre}`);
+                 console.log(`localidades ${index + 1}: ${nombre}`);
+             });
+     }
+ 
+     logTodasLocalidades() {
+         // Abrir dropdown
+         this.localidad().click();
+ 
+         const scrollContainer = cy.get('[class*="overflow-y-auto"]').eq(1).scrollIntoView(); // el div que tiene scroll
+ 
+         let prevCount = 0;
+ 
+         function scrollAndCheck() {
+             cy.get(scrollContainer).then($container => {
+                 cy.get('[data-cy^="option-localidad-"]').then($list => {
+                     cy.wait(1000)
+                     const currentCount = $list.length;
+ 
+                     if (currentCount > prevCount) {
+                         prevCount = currentCount;
+                         // Scroll al último elemento visible
+                         cy.get($list[$list.length - 1]).scrollIntoView();
+                         scrollAndCheck(); // recursivo hasta que no aparezcan más
+                         cy.wait(1000)
+                     } else {
+                         // Listar todas las localidades
+                         cy.get('[data-cy^="option-localidad-"] span[data-label="true"]')
+                             .each(($el, index) => {
+                                 const nombre = $el.text().trim();
+                                 cy.log(`Localidad ${index + 1}: ${nombre}`);
+                                 console.log(`Localidad ${index + 1}: ${nombre}`);
+                             });
+                     }
+                 });
+             });
+         }
+ 
+         scrollAndCheck();
+     } */
+
+
+    registerForm(overrides = {}) {
+        const defaults = {
+            nombre: 'Raul',
+            apellido: 'Cisnero',
+            telefono: '3511234567',
+            dni: '31823148',
+            provincia: 'Buenos Aires',
+            localidad: 'Coronel Dorrego',
+            fecha: { day: 27, month: 10, year: 1992 },
+            email: 'Ruly@test.com',
+            password: '123456'
+        };
+        const data = { ...defaults, ...overrides };
+        this.fillNombre(data.nombre);
+        this.fillApellido(data.apellido);
+        this.telefono().clear().type(data.telefono);
+        this.fillDni(data.dni);
+        this.fillProvincia(data.provincia);
+        this.fillLocalidad(data.localidad);
+        this.fillFecha(data.fecha.day, data.fecha.month, data.fecha.year);
+        this.fillEmail(data.email);
+        this.fillconfirmEmail(data.lastEmail); // usa this.lastEmail automáticamente
+        this.fillPassword(data.password);
+        this.fillconfirmPassword(data.lastpassword); // usa this.lastpassword automáticamente
+
+        return data; // opcional, por si querés asertar después con los valores
     }
-
-    selectlocalidad() {
-        this.localidad().click();
-        cy.get('[data-cy^="option-localidad-"] span[data-label="true"]')
-            .contains('Coronel Dorrego')
-            .click({ force: true });
-    }
-
-
-    //funcion para traerme todos los nombres de las provincias
-    //(^= significa "que empiece con")va a agarrar todos los elementos cuyo atributo data-cy arranca con option-provincia-
-    logProvincias() {
-        this.provincia().click()
-        cy.get('[data-cy^="option-provincia-"]')
-            .each(($el, index) => {
-                const nombre = $el.text().trim();
-                cy.log(`Provincia ${index + 1}: ${nombre}`);
-                console.log(`Provincia ${index + 1}: ${nombre}`);
-            });
-    }
-
-    logLocalidades() {
-        this.localidad().click()
-        cy.get('[data-cy^="option-localidad-"]').scrollTo('bottom')
-            .each(($el, index) => {
-                const nombre = $el.text().trim();
-                cy.log(`localidades ${index + 1}: ${nombre}`);
-                console.log(`localidades ${index + 1}: ${nombre}`);
-            });
-    }
-
-    logTodasLocalidades() {
-        // Abrir dropdown
-        this.localidad().click();
-
-        const scrollContainer = cy.get('[class*="overflow-y-auto"]').eq(1).scrollIntoView(); // el div que tiene scroll
-
-        let prevCount = 0;
-
-        function scrollAndCheck() {
-            cy.get(scrollContainer).then($container => {
-                cy.get('[data-cy^="option-localidad-"]').then($list => {
-                    cy.wait(1000)
-                    const currentCount = $list.length;
-
-                    if (currentCount > prevCount) {
-                        prevCount = currentCount;
-                        // Scroll al último elemento visible
-                        cy.get($list[$list.length - 1]).scrollIntoView();
-                        scrollAndCheck(); // recursivo hasta que no aparezcan más
-                        cy.wait(1000)
-                    } else {
-                        // Listar todas las localidades
-                        cy.get('[data-cy^="option-localidad-"] span[data-label="true"]')
-                            .each(($el, index) => {
-                                const nombre = $el.text().trim();
-                                cy.log(`Localidad ${index + 1}: ${nombre}`);
-                                console.log(`Localidad ${index + 1}: ${nombre}`);
-                            });
-                    }
-                });
-            });
-        }
-
-        scrollAndCheck();
-    }
-
-
-
-    registerForm() {
-        this.nombre().type('Raul');
-        this.apellido().type('Cisnero');
-        this.telefono().type('20221231');
-        this.dni().type('32122333');
-        this.fillProvincia('Buenos Aires');
-        this.fillLocalidad('Coronel Dorrego');
-        //this.logTodasLocalidades()
-        //this.logLocalidades();
-        this.fillFecha(27, 10, 1992);
-        this.fillEmail('Ruly@test.com');
-        this.fillconfirmEmail('');
-        this.fillPassword('1234');
-        this.fillconfirmPassword('');
-        this.clickButtonRegister();
-    }
-
-
 }
+
+
