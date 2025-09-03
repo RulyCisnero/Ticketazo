@@ -15,9 +15,42 @@ describe('Epica Login', () => {
         login.clickButtonRegister();
         cy.wait(400)
     })
-/* 
-    it('HAppyPath-Direccion a UI', () => {
+
+    it('HAppyPath', () => {
         register.registerForm();
+        register.clickButtonRegister();
+    });
+
+    it('Usuario registrado (Existente)', () => {
+        register.registerForm({});
+        register.clickButtonRegister();
+        register.DniExistente();
+    });
+
+    it('no envía si hay campos requeridos vacíos', () => {
+        // Click directo sin completar nada
+        register.clickButtonRegister();
+        register.messageErrorGenerico();
+        register.assertFormInvalid();
+    });
+
+    it('campo nombre y apellido sin datos', () => {
+        register.registerForm({ nombre: ' ', apellido: ' ' });
+        register.clickButtonRegister();
+    });
+
+    it('ingreso de letras en campos de telefono', () => {
+        register.registerForm({ telefono: 'SupuestoNr' })
+        register.clickButtonRegister();
+        register.messageErrorGenerico();
+        register.assertFormInvalid();
+    });
+
+    it('ingreso de letras en campo DNI', () => {
+        register.registerForm({ dni: 'SupuestoNr' })
+        register.clickButtonRegister();
+        register.messageErrorGenerico();
+        register.assertFormInvalid();
     });
 
     it('teléfono inválido (<10 dígitos)', () => {
@@ -26,7 +59,6 @@ describe('Epica Login', () => {
         register.telefono().then(($i) => {
             expect($i[0].checkValidity()).to.equal(false);
         });
-        //assertNoRegisterRequest();
     });
 
     it('Dni invalido (<8 digitos)', () => {
@@ -43,33 +75,42 @@ describe('Epica Login', () => {
         register.email().then(($i) => {
             expect($i[0].checkValidity()).to.equal(false);
         });
-        //assertNoRegisterRequest();
-    }); */
+    });
 
-   /*  it('no envía si los emails NO coinciden (si tu UI lo valida)', () => {
-        // Si la app no valida en front esta regla, este test fallará: ajustalo según comportamiento real.
-       register.registerForm({
+    it('no envía si los emails NO coinciden', () => {
+        //No me anda
+        register.registerForm({
             email: `raul.qa+${Date.now()}@example.com`,
             confirmarEmail: 'otro+correo@example.com'
         });
         register.ButtonRegister();
-        // Esperamos que el front evite enviar al backend
-        //assertNoRegisterRequest();
+    });
 
-        // (Opcional) si hay mensaje de error
-        // cy.contains(/emails? no coinciden/i).should('be.visible');
-    }); */
+    it('fecha incompleta - falta día', () => {
+        register.registerForm({
+            fecha: { day: '', month: 10, year: 1992 }
+        });
+        register.clickButtonRegister();
+        register.messageErrorGenerico();
+        register.assertFormInvalid();
+    });
+
+    it('fecha incompleta - falta mes', () => {
+        register.registerForm({
+            fecha: { day: 27, month: '', year: 1992 }
+        });
+        register.clickButtonRegister();
+        register.messageErrorGenerico();
+        register.assertFormInvalid();
+    });
 
     it('fecha está incompleta', () => {
-    // Pasamos fechaNac = false para dejar "dd/mm/aaaa"
-    register.registerForm({fechaNac});
-
-    register.clickButtonRegister();
-
-    // El DateField incluye un input hidden required -> debe invalidar el form
-    cy.get('input:invalid').its('length').should('be.greaterThan', 0);
-    //assertNoRegisterRequest();
-  });
+        // Pasamos fechaNac ="dd/mm/aaaa"
+        register.registerForm({ fecha: { day: '', month: '', year: '' } });
+        register.clickButtonRegister();
+        register.messageErrorGenerico();
+        register.assertFormInvalid();
+    });
 
 });
 

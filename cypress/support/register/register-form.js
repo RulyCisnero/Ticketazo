@@ -16,6 +16,10 @@ export class RegisterForm {
         this.confirmPassword = () => cy.get('[data-cy="input-repetir-password"]');
         this.ButtonRegister = () => cy.get('[data-cy="btn-registrarse"]');
 
+        //
+        this.messageErrorInputs = () => cy.get('[class="text-tiny text-danger"]');
+        this.messageError = () => cy.get('[data-cy="error-message"]');
+
         this.lastEmail = "";
         this.lastpassword = "";
         //
@@ -30,8 +34,8 @@ export class RegisterForm {
     fillApellido(apellido) {
         this.apellido().clear().type(apellido);
     }
-    
-    fillTelefono(telefono){
+
+    fillTelefono(telefono) {
         this.telefono().type(telefono);
     }
 
@@ -54,11 +58,16 @@ export class RegisterForm {
 
     fillFecha(day, month, year) {
         this.fechaNac();
-        this.day().type(day);
-        this.mes().type(month);
-        this.anio().type(year);
+        if (day) {
+            this.day().clear().type(day);
+        }
+        if (month) {
+            this.mes().clear().type(month);
+        }
+        if (year) {
+            this.anio().clear().type(year);
+        }
     }
-
 
     //const email = 'Test@gmail.com';
     fillEmail(email) {
@@ -66,9 +75,9 @@ export class RegisterForm {
         this.email().type(email);
     }
 
-    fillconfirmEmail() {
-        this.confirmEmail().type(this.lastEmail)
-    }
+    fillConfirmEmail(email = this.lastEmail) {
+    this.confirmEmail().clear().type(email);
+}
 
     fillPassword(password) {
         this.lastpassword = password;
@@ -82,6 +91,33 @@ export class RegisterForm {
     clickButtonRegister() {
         this.ButtonRegister().click();
     }
+
+    //Mensajes de error falta de datos en inputs
+
+    messageErrorGenerico() {
+        this.messageErrorInputs().should('be.visible').contains('Completa este campo');
+    }
+
+    UsuarioExistente() {
+        this.messageError().should('be.visible').contains('Ya existe un usuario registrado con ese correo electrónico');
+    }
+
+    DniExistente(){
+        this.messageError().should('be.visible').contains('Ya existe un usuario registrado con ese DNI')
+    }
+
+    EmailsDistintos(){
+        this.messageError().should('be.visible').contains('Los correos electrónicos no coinciden');
+    }
+
+    passwordDistintos(){
+        this.messageError().should('be.visible').contains('Las contraseñas no coinciden');
+    }
+
+    assertFormInvalid() {
+        cy.get('input:invalid').its('length').should('be.greaterThan', 0);
+    }
+
 
     /*  //seleccionar provincia hardcodeada
      selectProvincia() {
@@ -162,13 +198,14 @@ export class RegisterForm {
         const defaults = {
             nombre: 'Raul',
             apellido: 'Cisnero',
-            telefono: '3511234567',
-            dni: '31823148',
+            telefono: '3511334567',
+            dni: '31822148',
             provincia: 'Buenos Aires',
             localidad: 'Coronel Dorrego',
             fecha: { day: 27, month: 10, year: 1992 },
-            email: 'Ruly@test.com',
-            password: '123456'
+            email: `Raul-+${Date.now()}@Test.com`,
+            confirmEmail: null,
+            password: 'Test12345@'
         };
         const data = { ...defaults, ...overrides };
         this.fillNombre(data.nombre);
@@ -179,11 +216,11 @@ export class RegisterForm {
         this.fillLocalidad(data.localidad);
         this.fillFecha(data.fecha.day, data.fecha.month, data.fecha.year);
         this.fillEmail(data.email);
-        this.fillconfirmEmail(data.lastEmail); // usa this.lastEmail automáticamente
+        this.fillConfirmEmail(data.confirmEmail || this.lastEmail); 
         this.fillPassword(data.password);
-        this.fillconfirmPassword(data.lastpassword); // usa this.lastpassword automáticamente
+        this.fillconfirmPassword(data.lastpassword); 
 
-        return data; // opcional, por si querés asertar después con los valores
+        return data;
     }
 }
 
