@@ -11,16 +11,13 @@ describe('Tareas relacionadas con el admin', () => {
     cy.clearCookies();
     cy.clearLocalStorage();
     admin.visitandoPaginaAdmin();
-    cy.wait(1000);
     cy.get('.justify-end > .text-sm').click();
-    cy.wait(1000);
     admin.credencialesValidasAdmin("admin@admin.com", "admin");
     admin.clickButtonLogin();
-    cy.wait(1000);
   })
 
 
-  /* it('TC-001: En Creado, buscar nombre del evento X → cambiar a Rechazado → verificar en Rechazado si se encuentra el evento X', () => {
+  it('TC-001: En Creado, buscar nombre del evento X → cambiar a Rechazado → verificar en Rechazado si se encuentra el evento X', () => {
     //Nombre del Evento: F90
     //Cambiar estado Creado → Rechazado
     cy.get('[type="button').eq(1).click();
@@ -69,7 +66,7 @@ describe('Tareas relacionadas con el admin', () => {
     evento.clickModalCancelar();
     cy.wait(2000)
     evento.verificarTextoEnGrilla('Grupo 7');
-  }); */
+  }); 
 
    it('TC-001: En Pendiente, buscar cliente por Nombre X → cambiar a Rechazado → verificar en Rechazado si se encuentra el cliente X.', () => {
     cy.get('[type="button').eq(1).click();
@@ -85,7 +82,6 @@ describe('Tareas relacionadas con el admin', () => {
     cliente.bttnRechazado().click();
     cy.wait(4000)// 4 segundos para que trabaje la api
     cliente.verificarTextoEnGrilla('rulycisnero@gmail.com');
-
   }); 
 
    it('TC-002: En Rechazado, buscar cliente por Email X → cambiar a Aprobado → verificar en Aprobado si se encuentra el cliente X.', () => {
