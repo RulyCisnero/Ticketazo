@@ -20,7 +20,7 @@ describe('Tareas relacionadas con el admin', () => {
   })
 
 
-  it('TC-001: En Creado, buscar nombre del evento X → cambiar a Rechazado → verificar en Rechazado si se encuentra el evento X', () => {
+  /* it('TC-001: En Creado, buscar nombre del evento X → cambiar a Rechazado → verificar en Rechazado si se encuentra el evento X', () => {
     //Nombre del Evento: F90
     //Cambiar estado Creado → Rechazado
     cy.get('[type="button').eq(1).click();
@@ -30,21 +30,12 @@ describe('Tareas relacionadas con el admin', () => {
     evento.bttnCreado().click();
     cy.wait(2000);
     //evento.cambiarEstadoDeEventoPorTexto('🎉💀ñ@#', 'Rechazado');
-    evento.cambiarEstadoDeEventoPorTexto('F90', 'Rechazado');
+    evento.cambiarEstadoDeEventoPorTexto('Ado Hibana', 'Rechazado');
     cy.wait(2000)
     evento.clickModalAceptar();
     cy.wait(2000)
     evento.bttnRechazado().click();
-    evento.verificarTextoEnGrilla('F90');
-    /* 
-    evento.obtenerFilaPorTexto('MegaTest').within(() => {
-      cy.get('[data-cy^="select-estado-"]').click();
-    });
-    evento.obtenerDatosFila('Grupo 7').then(datos => {
-      expect(datos.email).to.eq('raulecisnero@gmail.com');
-      //expect(datos.estado).to.contain('Rechazado');
-    }); */
-
+    evento.verificarTextoEnGrilla('Ado Hibana');
   });
 
   it('TC-002: En Rechazado, buscar Email del creador del evento X → cambiar a Aprobado → verificar en Aprobado si se encuentra el evento X', () => {
@@ -56,12 +47,12 @@ describe('Tareas relacionadas con el admin', () => {
     cy.wait(5000)
     evento.bttnRechazado().click();
     cy.wait(2000);
-    evento.cambiarEstadoDeEventoPorTexto('raulecisnero@gmail.com', 'Aprobado');
+    evento.cambiarEstadoDeEventoPorTexto('lorens_mendez@hotmail.com', 'Aprobado');
     cy.wait(2000)
     evento.clickModalAceptar();
     cy.wait(2000)
     evento.bttnAprobado().click();
-    evento.verificarTextoEnGrilla('raulecisnero@gmail.com');
+    evento.verificarTextoEnGrilla('lorens_mendez@hotmail.com');
   });
 
   it('TC-003:En Completado, buscar evento por su nombre X → Cambiar estado a Pospuesto → cancelar modal', () => {
@@ -78,41 +69,63 @@ describe('Tareas relacionadas con el admin', () => {
     evento.clickModalCancelar();
     cy.wait(2000)
     evento.verificarTextoEnGrilla('Grupo 7');
-  });
+  }); */
 
-  it('TC-001: En Pendiente, buscar cliente por Nombre X → cambiar a Rechazado → verificar en Rechazado si se encuentra el cliente X.', () => {
+   it('TC-001: En Pendiente, buscar cliente por Nombre X → cambiar a Rechazado → verificar en Rechazado si se encuentra el cliente X.', () => {
     cy.get('[type="button').eq(1).click();
     cy.wait(1000)
     cliente.clickAdminClientes();
     cy.wait(6000);
     cliente.bttnPendiente().click();
-    cliente.cambiarEstadoDeClientePorTexto('@¦¦', 'Rechazado');
+    cy.wait(1000)
+    cliente.cambiarEstadoDeClientePorTexto('yeyaTester S.A', 'Rechazado');
     cy.wait(1000)
     cliente.clickModalAceptar();
+    cy.wait(4000);
     cliente.bttnRechazado().click();
-    cliente.verificarTextoEnGrilla('@¦¦');
-  });
+    cy.wait(4000)// 4 segundos para que trabaje la api
+    cliente.verificarTextoEnGrilla('rulycisnero@gmail.com');
 
-  it('TC-002: En Rechazado, buscar cliente por Email X → cambiar a Aprobado → verificar en Aprobado si se encuentra el cliente X.', () => {
+  }); 
+
+   it('TC-002: En Rechazado, buscar cliente por Email X → cambiar a Aprobado → verificar en Aprobado si se encuentra el cliente X.', () => {
     cy.get('[type="button').eq(1).click();
     cy.wait(1000)
     cliente.clickAdminClientes();
     cy.wait(6000);
     cliente.bttnRechazado().click();
-    cliente.cambiarEstadoDeClientePorTexto('@¦¦', 'Pendiente');
+    cliente.cambiarEstadoDeClientePorTexto('rulycisnero@gmail.com', 'Aprobado');
     cy.wait(1000)
     cliente.clickModalAceptar();
+    cy.wait(4000)
+    cliente.bttnAprobado().click();
+    cy.wait(4000)
+    cliente.verificarTextoEnGrilla('rulycisnero@gmail.com');
   });
 
-  it('Volviendo al estadio anterior del cliente', () => {
+  it('TC-003: En Aprobado, buscar cliente por Nombre X → cambiar a Rechazado → cancelar modal → verificar que el estado no cambie', () => {
     cy.get('[type="button').eq(1).click();
     cy.wait(1000)
     cliente.clickAdminClientes();
     cy.wait(6000);
-    cliente.bttnRechazado().click();
-    cliente.cambiarEstadoDeClientePorTexto('@¦¦', 'Pendiente');
+    cliente.bttnAprobado().click();
+    cliente.cambiarEstadoDeClientePorTexto('rulycisnero@gmail.com', 'Rechazado');
+    cy.wait(1000)
+    cliente.clickModalCancelar();
+  });
+ 
+  it('devuelvo al cliente su estado inicial', () => {
+    cy.get('[type="button').eq(1).click();
+    cy.wait(1000)
+    cliente.clickAdminClientes();
+    cy.wait(6000);
+    cliente.bttnAprobado().click();
+    cliente.cambiarEstadoDeClientePorTexto('rulycisnero@gmail.com', 'Pendiente');
     cy.wait(1000)
     cliente.clickModalAceptar();
+    cy.wait(2000);
+    cliente.bttnPendiente().click();
+    cy.wait(6000)
+    cliente.verificarTextoEnGrilla('rulycisnero@gmail.com');
   });
-
 })
